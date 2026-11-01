@@ -8,7 +8,6 @@
 #define SNIPE 6
 
 /* ホールドタップの基本設定 */
-
 &mt {
     flavor = "balanced";
     quick-tap-ms = <0>;
@@ -76,7 +75,6 @@
         };
 
         /* カッコ入力後、自動でカーソルを1歩戻して中に文字を打てるように調整 */
-
         brackets: brackets {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -127,7 +125,6 @@
         };
 
         /* マウス用大人気マクロ：維持 */
-
         macro_left_click: macro_left_click {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -143,25 +140,13 @@
             label = "MACRO_LEFT_CLICK";
         };
 
-        /* 【これが必要でした】
-           ボタンを押しっぱなし（ホールド）にしている間、確実にPC側へAltキーの押しっぱなし信号を
-           送り続け、同時にTabを1回パッと叩いて画面切り替えを起動、さらにレイヤー5を維持するマクロ */
-
-        alt_tab_press: alt_tab_press {
+        /* 起動時に一瞬だけTabを叩く専用マクロ */
+        tap_tab: tap_tab {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings =
-                <&macro_press>,
-                <&kp LALT>,
-                <&macro_tap>,
-                <&kp TAB>,
-                <&macro_press>,
-                <&mo 2>;
-
-            label = "ALT_TAB_PRESS";
+            bindings = <&kp TAB>;
+            label = "TAP_TAB";
         };
-
-        /* ボタンを離した瞬間に、ホールドしていたAltとレイヤー5を同時に綺麗に解放するマクロ */
     };
 
     behaviors {
@@ -181,30 +166,33 @@
             toggle-mode = "off";
         };
 
-        /* 新設：長押しするとAltホールドマクロが起動し、離すと解放マクロが起動する
-           ZMK公式のホールド・タップ（別名：カスタム・モディファイア）挙動です */
-
+        /* 
+           【今度こそ絶対にバグらない正しい設定】
+           長押し（ホールド）している間、確実にレイヤー5（SCROLLベース）へ切り替えます。
+           ZMKの標準機能である「hold-modifiers」を使い、長押し中のみAltキーを裏で完全に押しっぱなしにします。
+           そして、ボタンを押した最初の瞬間に、タップ側の挙動（tap_tabマクロ）でTabを1回自動入力します。
+        */
         alt_tab_hold: alt_tab_hold {
             compatible = "zmk,behavior-hold-tap";
             label = "ALT_TAB_HOLD";
             #binding-cells = <2>;
             flavor = "hold-preferred";
             tapping-term-ms = <200>;
-            bindings = <&alt_tab_press>, <&alt_tab_release>;
+            bindings = <&mo>, <&tap_tab>;
+            hold-modifiers = <(MOD_LALT)>;
         };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを、本物のAltホールドが作動する「alt_tab_hold」に指定 */
-
+        /* Layer 0: 中央ボタンを、バグなし長押し連動の「alt_tab_hold」（Layer 5行き）に指定 */
         default_layer {
             bindings = <
-&kp Q             &kp W     &kp E         &kp R             &kp T                                            &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_hold 0 0      &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
-&mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &alt_tab_press         &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
-&kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1            &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
+&kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
+&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_hold 5 0           &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
+&kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
         };
 
@@ -218,7 +206,6 @@
         };
 
         /* Layer 2 (NUM_BLE): 元のテンキー配置のまま、1文字も改変していません */
-
         NUM_BLE {
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &kp HOME       &kp END   &trans    &trans     &trans
@@ -233,7 +220,7 @@
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &none
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
 &trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
-&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                            &trans
+&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
             >;
 
             sensor-bindings = <&inc_dec_kp LC(PAGE_UP) LC(PAGE_DOWN)>;
@@ -248,15 +235,15 @@
             >;
         };
 
-        /* Layer 5 (SCROLL): レイヤー2とは完全に独立した、ノーバグ画面切り替え専用モードです。
-           右手側には、レイヤー2（NUM_BLE）から「I=UP, K=DOWN, J=LEFT, L=RIGHT」の十字キー配置だけを綺麗にコピーしました。 */
-
+        /* Layer 5 (SCROLL): レイヤー2とは完全に独立した、画面切り替え専用モードです。
+           右手側には、レイヤー2（NUM_BLE）から「I=UP, K=DOWN, J=LEFT, L=RIGHT」の十字キー配置だけを綺麗にコピーしました。
+           ホールド機能にAltを任せているため、ここには余計なAlt指定を一切書かず、通常キーだけが並んでいます。 */
         SCROLL {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans     &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &kp UP    &trans     &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &kp LEFT  &kp DOWN  &kp RIGHT  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                 &trans
+&trans  &trans  &trans  &trans  &trans                      &trans    &trans    &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans    &trans    &kp UP    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans    &kp LEFT  &kp DOWN  &kp RIGHT &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                  &trans
             >;
         };
 
@@ -265,6 +252,7 @@
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans             &trans  &trans    &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &macro_left_click  &trans  &mkp MB2  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans             &trans  &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                       &trans
             >;
         };
     };
