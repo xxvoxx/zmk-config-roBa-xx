@@ -17,6 +17,23 @@
 &sl { release-after-ms = <180>; };
 
 / {
+    /* 
+       【今度こそ大本命の設定】
+       レイヤー5（SCROLL）にいる間だけ、トラックボールの「上下の移動（Y軸）」を
+       マウス移動ではなく、キーボードの「RIGHT（右矢印）」と「LEFT（左矢印）」の信号へ
+       完全に内部で翻訳して連打出力する、ZMK標準のリスナー定義です。
+    */
+    p_alt_tab_input {
+        compatible = "zmk,input-behavior-listener";
+        device = <&pd0>; // roBaの右側トラックボールのセンサーを指定
+        layers = <5>;    // レイヤー5（SCROLL）にいるときだけこの機能をONにする
+        evt-type = <INPUT_EV_REL>;
+        code = <INPUT_REL_Y>; // トラックボールの「上下」の動きをトリガーにする
+        scale-multiplier = <1>;
+        scale-divisor = <40>; // コロコロしたときの連打の速さを適正に調整
+        bindings = <&ib_kp RIGHT LEFT>; // 上に転がすと右矢印、下に転がすと左矢印
+    };
+
     combos {
         compatible = "zmk,combos";
 
@@ -74,7 +91,6 @@
             label = "TO_LAYER_0";
         };
 
-        /* カッコ入力後、自動でカーソルを1歩戻して中に文字を打てるように調整 */
         brackets: brackets {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -157,7 +173,7 @@
             toggle-mode = "off";
         };
 
-        /* 確実な設定：長押し中だけLayer 5（SCROLL）を起動するシンプルなビヘイビア */
+        /* 長押し中だけLayer 5（SCROLLベースのカスタム）を起動するホールドタップ */
         alt_tab_hold: alt_tab_hold {
             compatible = "zmk,behavior-hold-tap";
             label = "ALT_TAB_HOLD";
@@ -166,12 +182,18 @@
             tapping-term-ms = <200>;
             bindings = <&mo>, <&none>;
         };
+
+        /* インプットリスナー用のキーコード変換ビヘイビア */
+        ib_kp: ib_kp {
+            compatible = "zmk,behavior-input-two-param";
+            #binding-cells = <2>;
+            bindings = <&kp>, <&kp>;
+        };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを長押し中だけLayer 5へ切り替える設定に修正 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
@@ -219,9 +241,10 @@
             >;
         };
 
-        /* Layer 5 (SCROLL): このレイヤーの背景全体に LALT (Altホールド) を直接組み込みます。
-           同時に、トラックボールから出力されるスクロール信号（SCRL_UP/DOWN）自体を
-           Windowsが100%確実に認識する「右矢印」「左矢印」のキー入力として直接配置し直しています。 */
+        /* Layer 5 (SCROLLベースのカスタム): 
+           このレイヤーに入ると、インプットリスナーによりトラックボールの物理的な「移動信号」が
+           パソコンに届く前にすべて「右矢印」「左矢印」のキー連打へと完全に差し替えられます。
+           同時に背景の LALT により、Altがホールド状態になります。 */
         SCROLL {
             bindings = <
 &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT                                &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
@@ -237,7 +260,3 @@
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &macro_left_click  &trans  &mkp MB2  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans             &trans  &trans    &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                       &trans
-            >;
-        };
-    };
-};
