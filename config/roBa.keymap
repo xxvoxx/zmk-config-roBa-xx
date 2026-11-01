@@ -7,7 +7,6 @@
 #define SCROLL 5
 #define SNIPE 6
 
-/* ホールドタップの基本設定 */
 &mt {
     flavor = "balanced";
     quick-tap-ms = <0>;
@@ -74,32 +73,31 @@
             label = "TO_LAYER_0";
         };
 
-        /* カッコ入力後、自動でカーソルを1歩戻して中に文字を打てるように調整 */
         brackets: brackets {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&kp LEFT_BRACKET &kp RIGHT_BRACKET &kp LEFT>;
+            bindings = <&kp LEFT_BRACKET &kp RIGHT_BRACKET>;
             label = "BRACKETS";
         };
 
         braces: braces {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&kp LEFT_BRACE &kp RIGHT_BRACE &kp LEFT>;
+            bindings = <&kp LEFT_BRACE &kp RIGHT_BRACE>;
             label = "BRACES";
         };
 
         parenthesis: parthens {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&kp LEFT_PARENTHESIS &kp RIGHT_PARENTHESIS &kp LEFT>;
+            bindings = <&kp LEFT_PARENTHESIS &kp RIGHT_PARENTHESIS>;
             label = "PARTHENS";
         };
 
         lgts: lgts {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&kp LESS_THAN &kp GREATER_THAN &kp LEFT>;
+            bindings = <&kp LESS_THAN &kp GREATER_THAN>;
             label = "LGTS";
         };
 
@@ -124,7 +122,6 @@
             label = "SCREENSHOT";
         };
 
-        /* マウス用大人気マクロ：完全維持 */
         macro_left_click: macro_left_click {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -162,13 +159,12 @@
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを、最もシンプルでバグの起きない「長押しでLayer 5へ切り替え」に指定 */
         default_layer {
             bindings = <
-&kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &mo 5                       &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
-&mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
-&kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
+&kp Q             &kp W     &kp E         &kp R             &kp T                                       &kp Y        &kp U  &kp I      &kp O       &kp P
+&kp A             &kp S     &kp D         &kp F             &kp G      &msc SCRL_UP      &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &msc SCRL_DOWN    &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
+&kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1       &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
         };
 
@@ -181,7 +177,6 @@
             >;
         };
 
-        /* Layer 2 (NUM_BLE): 【完全無傷】元の便利なテンキー配置から一切改変していません */
         NUM_BLE {
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &kp HOME       &kp END   &trans    &trans     &trans
@@ -196,7 +191,7 @@
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &none
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
 &trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
-&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
+&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                            &trans
             >;
 
             sensor-bindings = <&inc_dec_kp LC(PAGE_UP) LC(PAGE_DOWN)>;
@@ -211,15 +206,12 @@
             >;
         };
 
-        /* Layer 5 (SCROLL): レイヤー2とは完全に独立した、100%ノーバグの画面切り替え専用モードです。
-           右手側には、レイヤー2（NUM_BLE）から「I=UP, K=DOWN, J=LEFT, L=RIGHT」の十字キー配置だけを綺麗にコピーし、
-           それぞれのキーに直接「Alt(LA)」の装飾を組み込みました。 */
         SCROLL {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans         &trans         &trans         &trans         &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans         &trans         &kp LA(UP)     &trans         &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans         &kp LA(LEFT)   &kp LA(DOWN)   &kp LA(RIGHT)  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp LA(ENTER)                                               &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                          &trans
             >;
         };
 
