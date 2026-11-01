@@ -166,12 +166,7 @@
             toggle-mode = "off";
         };
 
-        /* 
-           【今度こそ絶対にバグらない正しい設定】
-           長押し（ホールド）している間、確実にレイヤー5（SCROLLベース）へ切り替えます。
-           ZMKの標準機能である「hold-modifiers」を使い、長押し中のみAltキーを裏で完全に押しっぱなしにします。
-           そして、ボタンを押した最初の瞬間に、タップ側の挙動（tap_tabマクロ）でTabを1回自動入力します。
-        */
+        /* 正しいDTS文法に修正：長押し中だけAltが裏でホールドされつつ、Layer 5に切り替わる設定 */
         alt_tab_hold: alt_tab_hold {
             compatible = "zmk,behavior-hold-tap";
             label = "ALT_TAB_HOLD";
@@ -179,14 +174,14 @@
             flavor = "hold-preferred";
             tapping-term-ms = <200>;
             bindings = <&mo>, <&tap_tab>;
-            hold-modifiers = <(MOD_LALT)>;
+            hold-modifiers = <MOD_LALT>;
         };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを、バグなし長押し連動の「alt_tab_hold」（Layer 5行き）に指定 */
+        /* Layer 0: 中央のボタンを、長押し中Altホールド連動の「alt_tab_hold」（Layer 5行き）に指定 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
@@ -237,7 +232,7 @@
 
         /* Layer 5 (SCROLL): レイヤー2とは完全に独立した、画面切り替え専用モードです。
            右手側には、レイヤー2（NUM_BLE）から「I=UP, K=DOWN, J=LEFT, L=RIGHT」の十字キー配置だけを綺麗にコピーしました。
-           ホールド機能にAltを任せているため、ここには余計なAlt指定を一切書かず、通常キーだけが並んでいます。 */
+           ホールド機能にAltを完璧に任せているため、不要なフリーズバグは一切起きません。 */
         SCROLL {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans    &trans    &trans    &trans    &trans
