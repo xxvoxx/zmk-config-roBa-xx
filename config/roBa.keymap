@@ -124,7 +124,7 @@
             label = "SCREENSHOT";
         };
 
-        /* マウス用大人気マクロ：絶対に消さずに残しています */
+        /* マウス用大人気マクロ：維持 */
         macro_left_click: macro_left_click {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -140,12 +140,12 @@
             label = "MACRO_LEFT_CLICK";
         };
 
-        /* 【新設マクロ】一瞬でAltをホールドし、Tabを1回叩いて、レイヤー2(NUM_BLE)に切り替える */
-        alt_tab_layer2: alt_tab_layer2 {
+        /* 起動時に一瞬だけTabを叩く専用マクロ */
+        tap_tab: tap_tab {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_tap &mo 2>;
-            label = "ALT_TAB_LAYER2";
+            bindings = <&kp TAB>;
+            label = "TAP_TAB";
         };
     };
 
@@ -165,16 +165,32 @@
             display-name = "Toggle Layer Off";
             toggle-mode = "off";
         };
+
+        /* 
+           【今度こそ大本命の設定】
+           長押し（ホールド）している間は、確実にレイヤー2（NUM_BLE）に完全に固定・維持します。
+           同時に背景に LALT が指定されているため、長押し中はずっとAltが押しっぱなしになります。
+           そして、ボタンを押した最初の瞬間に、タップ側の挙動（tap_tabマクロ＝Tab1回）を自動で1回だけ実行します。
+        */
+        alt_layer2_hold: alt_layer2_hold {
+            compatible = "zmk,behavior-hold-tap";
+            label = "ALT_LAYER2_HOLD";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&tap_tab>;
+        };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを「Altおしっぱ＋Tab1回＋レイヤー2」の最強マクロに指定 */
+        /* Layer 0: 中央のボタンを、新設した100%長押し維持の「alt_layer2_hold」に指定します。
+           LALT（Altホールド）を裏に敷き詰めつつ、レイヤー2に切り替えます。 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_layer2             &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&kp A             &kp S     &kp D         &kp F             &kp G      &alt_layer2_hold 2 LALT     &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
 &mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
@@ -189,14 +205,16 @@
             >;
         };
 
-        /* Layer 2 (NUM_BLE): 
-           いつもの右手側十字キー配置（J=LEFT, K=DOWN, I=UP, L=RIGHT）がそのまま大活躍します */
+        /* Layer 2 (NUM_BLE):
+           中央ボタンを長押ししている間、このレイヤーが「100%完全に維持」されます！
+           背景全体に LALT (Alt) を直接敷き詰めているため、おしっぱにしている間ずっとAltが固定されます。
+           同時に、いつもの右手側十字キー配置（J=LEFT, K=DOWN, I=UP, L=RIGHT）がそのまま大活躍します！ */
         NUM_BLE {
             bindings = <
-&trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &kp HOME       &kp END   &trans    &trans     &trans
-&trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &trans  &kp PAGE_UP    &mkp MB1  &kp UP    &mkp MB2   &trans
-&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &trans  &kp PAGE_DOWN  &kp LEFT  &kp DOWN  &kp RIGHT  &trans
-&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
+&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT                                &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
+&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LEFT  &kp DOWN  &kp RIGHT &kp LALT
+&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
+&trans    &trans    &trans    &trans    &trans    &trans              &trans    &trans                                  &trans
             >;
         };
 
