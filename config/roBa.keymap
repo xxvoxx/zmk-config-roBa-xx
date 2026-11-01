@@ -137,6 +137,21 @@
 
             label = "MACRO_LEFT_CLICK";
         };
+
+        /* トラックボールの動きに連動して、Altを押しながら矢印キーを叩くマクロ */
+        alt_right: alt_right {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp RIGHT>;
+            label = "ALT_RIGHT";
+        };
+
+        alt_left: alt_left {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp LEFT>;
+            label = "ALT_LEFT";
+        };
     };
 
     behaviors {
@@ -160,12 +175,13 @@
     keymap {
         compatible = "zmk,keymap";
 
+        /* Layer 0: 中央ボタンを「叩いた瞬間にAlt+Tabを起動し、AltをロックしてLayer 5に固定する」マクロへ変更 */
         default_layer {
             bindings = <
-&kp Q             &kp W     &kp E         &kp R             &kp T                                       &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &msc SCRL_UP      &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
-&mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A             &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
-&kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1       &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
+&kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
+&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_start              &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
+&kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
         };
 
@@ -189,10 +205,10 @@
 
         FUNCTION {
             bindings = <
-&trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &none
+&trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &screenshot
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
 &trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
-&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                            &trans
+&trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
             >;
 
             sensor-bindings = <&inc_dec_kp LC(PAGE_UP) LC(PAGE_DOWN)>;
@@ -207,13 +223,19 @@
             >;
         };
 
+        /* Layer 5 (SCROLL): Alt+Tab画面切り替え専用モード
+           このレイヤーに入ると、トラックボールの動き(スクロール)が「右矢印」「左矢印」に完全化けます。
+           中央ボタンをもう一度押すか、Enter / Space / 左クリックを押すと、Altが解除されてLayer 0に自動で戻ります。 */
         SCROLL {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                          &trans
+&trans  &trans  &trans  &trans  &trans                                     &trans        &trans        &trans        &trans        &trans
+&trans  &trans  &trans  &trans  &trans  &alt_tab_end             &trans    &trans        &trans        &trans        &trans        &trans
+&trans  &trans  &trans  &trans  &trans  &trans                   &trans    &trans        &trans        &trans        &trans        &trans
+&trans  &trans  &trans  &trans  &alt_tab_end  &trans             &trans    &alt_tab_end                                            &trans
             >;
+
+            /* トラックボールの上下動を「右矢印」と「左矢印」に変換 */
+            sensor-bindings = <&inc_dec_kp RIGHT LEFT>;
         };
 
         SNIPE {
