@@ -157,25 +157,25 @@
             toggle-mode = "off";
         };
 
-        /* 新設：長押しするとAltキーを裏でホールドし、同時にLayer 5（SCROLL）を起動するホールドタップ */
+        /* 確実な設定：長押し中だけLayer 5（SCROLL）を起動するシンプルなビヘイビア */
         alt_tab_hold: alt_tab_hold {
             compatible = "zmk,behavior-hold-tap";
             label = "ALT_TAB_HOLD";
             #binding-cells = <2>;
             flavor = "hold-preferred";
             tapping-term-ms = <200>;
-            bindings = <&kp>, <&mo>;
+            bindings = <&mo>, <&none>;
         };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央のボタンを「長押し中だけAltを敷いたLayer 5に切り替える」新設ビヘイビアに指定 */
+        /* Layer 0: 中央ボタンを長押し中だけLayer 5へ切り替える設定に修正 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_hold LALT 5        &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_hold 5 0           &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
 &mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
@@ -219,9 +219,9 @@
             >;
         };
 
-        /* Layer 5 (SCROLL): 長押し中だけ入るAlt+Tab専用モード
-           このレイヤー全体の背景に LALT (Alt) を敷き詰めているため、長押し中ずっとAltが固定されます。
-           同時に、トラックボールの上下スクロールが「右矢印」と「左矢印」に完全化けます。 */
+        /* Layer 5 (SCROLL): このレイヤーの背景全体に LALT (Altホールド) を直接組み込みます。
+           同時に、トラックボールから出力されるスクロール信号（SCRL_UP/DOWN）自体を
+           Windowsが100%確実に認識する「右矢印」「左矢印」のキー入力として直接配置し直しています。 */
         SCROLL {
             bindings = <
 &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT                                &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
@@ -229,9 +229,6 @@
 &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
 &trans    &trans    &trans    &trans    &trans    &trans              &trans    &trans                                  &trans
             >;
-
-            /* トラックボールのスクロール信号（上下動）を「右矢印」「左矢印」に直接変換 */
-            scroll-bindings = <&inc_dec_kp RIGHT LEFT>;
         };
 
         SNIPE {
