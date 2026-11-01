@@ -124,6 +124,7 @@
             label = "SCREENSHOT";
         };
 
+        /* マウス用大人気マクロ：絶対に消さずに残しています */
         macro_left_click: macro_left_click {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -137,6 +138,14 @@
                 <&tog_off 4 &sl 4>;
 
             label = "MACRO_LEFT_CLICK";
+        };
+
+        /* 【新設マクロ】一瞬でAltをホールドし、Tabを1回叩いて、レイヤー2(NUM_BLE)に切り替える */
+        alt_tab_layer2: alt_tab_layer2 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_tap &mo 2>;
+            label = "ALT_TAB_LAYER2";
         };
     };
 
@@ -156,40 +165,16 @@
             display-name = "Toggle Layer Off";
             toggle-mode = "off";
         };
-
-        /* これです！大切なマクロなので絶対にそのまま残します */
-        macro_left_click: macro_left_click {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings =
-                <&macro_press>,
-                <&mkp LCLK>,
-                <&macro_pause_for_release>,
-                <&macro_release>,
-                <&mkp LCLK>,
-                <&macro_tap>,
-                <&tog_off 4 &sl 4>;
-
-            label = "MACRO_LEFT_CLICK";
-        };
-
-        /* 【新設】今までのものを残したまま、その下にこれを追記します */
-        alt_tab_layer2: alt_tab_layer2 {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_tap &mo 2>;
-            label = "ALT_TAB_LAYER2";
-        };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを「長押し中だけAltを固定＋レイヤー2（NUM_BLE）にする」設定に指定 */
+        /* Layer 0: 中央ボタンを「Altおしっぱ＋Tab1回＋レイヤー2」の最強マクロに指定 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &alt_layer2_hold LALT 2     &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_layer2             &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
 &mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
@@ -204,8 +189,8 @@
             >;
         };
 
-        /* Layer 2 (NUM_BLE):
-           ここが元々持っている右手側（J=LEFT, K=DOWN, I=UP, L=RIGHT）の十字キー配置がそのまま活きます！ */
+        /* Layer 2 (NUM_BLE): 
+           いつもの右手側十字キー配置（J=LEFT, K=DOWN, I=UP, L=RIGHT）がそのまま大活躍します */
         NUM_BLE {
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &kp HOME       &kp END   &trans    &trans     &trans
@@ -219,7 +204,7 @@
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &none
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
-&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH        &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
+&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
             >;
 
@@ -253,4 +238,3 @@
             >;
         };
     };
-};
