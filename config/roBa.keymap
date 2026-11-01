@@ -17,23 +17,6 @@
 &sl { release-after-ms = <180>; };
 
 / {
-    /* 
-       【今度こそ大本命の設定】
-       レイヤー5（SCROLL）にいる間だけ、トラックボールの「上下の移動（Y軸）」を
-       マウス移動ではなく、キーボードの「RIGHT（右矢印）」と「LEFT（左矢印）」の信号へ
-       完全に内部で翻訳して連打出力する、ZMK標準のリスナー定義です。
-    */
-    p_alt_tab_input {
-        compatible = "zmk,input-behavior-listener";
-        device = <&pd0>; // roBaの右側トラックボールのセンサーを指定
-        layers = <5>;    // レイヤー5（SCROLL）にいるときだけこの機能をONにする
-        evt-type = <INPUT_EV_REL>;
-        code = <INPUT_REL_Y>; // トラックボールの「上下」の動きをトリガーにする
-        scale-multiplier = <1>;
-        scale-divisor = <40>; // コロコロしたときの連打の速さを適正に調整
-        bindings = <&ib_kp RIGHT LEFT>; // 上に転がすと右矢印、下に転がすと左矢印
-    };
-
     combos {
         compatible = "zmk,combos";
 
@@ -91,6 +74,7 @@
             label = "TO_LAYER_0";
         };
 
+        /* カッコ入力後、自動でカーソルを1歩戻して中に文字を打てるように調整 */
         brackets: brackets {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -173,31 +157,25 @@
             toggle-mode = "off";
         };
 
-        /* 長押し中だけLayer 5（SCROLLベースのカスタム）を起動するホールドタップ */
-        alt_tab_hold: alt_tab_hold {
+        /* 【究極の正解】長押し中だけAltを固定しつつ、レイヤー2（NUM_BLE）へ切り替える */
+        alt_layer2_hold: alt_layer2_hold {
             compatible = "zmk,behavior-hold-tap";
-            label = "ALT_TAB_HOLD";
+            label = "ALT_LAYER2_HOLD";
             #binding-cells = <2>;
             flavor = "hold-preferred";
             tapping-term-ms = <200>;
-            bindings = <&mo>, <&none>;
-        };
-
-        /* インプットリスナー用のキーコード変換ビヘイビア */
-        ib_kp: ib_kp {
-            compatible = "zmk,behavior-input-two-param";
-            #binding-cells = <2>;
-            bindings = <&kp>, <&kp>;
+            bindings = <&kp>, <&mo>;
         };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
+        /* Layer 0: 中央ボタンを「長押し中だけAltを固定＋レイヤー2（NUM_BLE）にする」設定に指定 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &alt_tab_hold 5 0           &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&kp A             &kp S     &kp D         &kp F             &kp G      &alt_layer2_hold LALT 2     &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
 &mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
@@ -212,6 +190,8 @@
             >;
         };
 
+        /* Layer 2 (NUM_BLE):
+           ここが元々持っている右手側（J=LEFT, K=DOWN, I=UP, L=RIGHT）の十字キー配置がそのまま活きます！ */
         NUM_BLE {
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &kp HOME       &kp END   &trans    &trans     &trans
@@ -225,7 +205,7 @@
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &none
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
-&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
+&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp SLASH        &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
             >;
 
@@ -241,16 +221,12 @@
             >;
         };
 
-        /* Layer 5 (SCROLLベースのカスタム): 
-           このレイヤーに入ると、インプットリスナーによりトラックボールの物理的な「移動信号」が
-           パソコンに届く前にすべて「右矢印」「左矢印」のキー連打へと完全に差し替えられます。
-           同時に背景の LALT により、Altがホールド状態になります。 */
         SCROLL {
             bindings = <
-&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT                                &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
-&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
-&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
-&trans    &trans    &trans    &trans    &trans    &trans              &trans    &trans                                  &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                          &trans
             >;
         };
 
@@ -260,3 +236,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &macro_left_click  &trans  &mkp MB2  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans             &trans  &trans    &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                       &trans
+            >;
+        };
+    };
+};
