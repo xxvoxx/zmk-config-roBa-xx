@@ -156,25 +156,16 @@
             display-name = "Toggle Layer Off";
             toggle-mode = "off";
         };
-
-        /* 新設：長押しするとAltキーを固定しつつ、スクロールレイヤー(Layer 5)を同時に開く挙動 */
-        trackball_alt_tab: trackball_alt_tab {
-            compatible = "zmk,behavior-hold-tap";
-            label = "TRACKBALL_ALT_TAB";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            bindings = <&kp>, <&mo>;
-        };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
+        /* Layer 0: 中央ボタンを通常の「レイヤー5へ切り替え」に変更 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
-&kp A             &kp S     &kp D         &kp F             &kp G      &trackball_alt_tab LALT 5   &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
+&kp A             &kp S     &kp D         &kp F             &kp G      &mo 5                       &kp K_APP      &kp H        &kp J  &kp K      &kp L       &kp SEMICOLON
 &mt LEFT_SHIFT Z  &kp X     &kp C         &kp V             &kp B      &kp A                       &kp DEL        &kp N        &kp M  &kp COMMA  &kp PERIOD  &mt RIGHT_SHIFT SLASH
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1                 &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
@@ -218,12 +209,13 @@
             >;
         };
 
+        /* Layer 5 (SCROLL): このレイヤーの背景全体に LALT (Altホールド) を直接組み込む */
         SCROLL {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                          &trans
+&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT                                &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
+&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
+&kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT  &trans              &trans    &kp LALT  &kp LALT  &kp LALT  &kp LALT  &kp LALT
+&trans    &trans    &trans    &trans    &trans    &trans              &trans    &trans                                  &trans
             >;
         };
 
