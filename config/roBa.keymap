@@ -7,6 +7,7 @@
 #define SCROLL 5
 #define SNIPE 6
 
+/* ホールドタップの基本設定 */
 &mt {
     flavor = "balanced";
     quick-tap-ms = <0>;
@@ -138,19 +139,20 @@
             label = "MACRO_LEFT_CLICK";
         };
 
-        /* トラックボールの動きに連動して、Altを押しながら矢印キーを叩くマクロ */
-        alt_right: alt_right {
+        /* 新設：Altを固定してTabを一瞬叩き、Layer 5にジャンプする起動マクロ */
+        alt_tab_start: alt_tab_start {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp RIGHT>;
-            label = "ALT_RIGHT";
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_tap &to 5>;
+            label = "ALT_TAB_START";
         };
 
-        alt_left: alt_left {
+        /* 新設：画面を決定してレイヤー0へ復帰するための解除マクロ */
+        alt_tab_end: alt_tab_end {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp LEFT>;
-            label = "ALT_LEFT";
+            bindings = <&macro_release &kp LALT>, <&macro_tap &to 0>;
+            label = "ALT_TAB_END";
         };
     };
 
@@ -175,7 +177,7 @@
     keymap {
         compatible = "zmk,keymap";
 
-        /* Layer 0: 中央ボタンを「叩いた瞬間にAlt+Tabを起動し、AltをロックしてLayer 5に固定する」マクロへ変更 */
+        /* Layer 0: 中央ボタンを「一瞬叩くだけでAlt+Tab起動・Altロック」のマクロに変更 */
         default_layer {
             bindings = <
 &kp Q             &kp W     &kp E         &kp R             &kp T                                                 &kp Y        &kp U  &kp I      &kp O       &kp P
@@ -205,7 +207,7 @@
 
         FUNCTION {
             bindings = <
-&trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &screenshot
+&trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &none   &none   &none    &none    &none
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
 &trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &kp F1  &kp F2  &kp F3  &kp F4   &kp F5   &kp F6
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                        &trans
@@ -224,8 +226,8 @@
         };
 
         /* Layer 5 (SCROLL): Alt+Tab画面切り替え専用モード
-           このレイヤーに入ると、トラックボールの動き(スクロール)が「右矢印」「左矢印」に完全化けます。
-           中央ボタンをもう一度押すか、Enter / Space / 左クリックを押すと、Altが解除されてLayer 0に自動で戻ります。 */
+           トラックボールの上下の動きを「右矢印」「左矢印」のキー入力としてPCに送信します。
+           中央ボタン、親指スペース、Enter、またはマウス左クリックを押すと、Altを離して確定し通常状態に戻ります。 */
         SCROLL {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                                     &trans        &trans        &trans        &trans        &trans
@@ -234,7 +236,7 @@
 &trans  &trans  &trans  &trans  &alt_tab_end  &trans             &trans    &alt_tab_end                                            &trans
             >;
 
-            /* トラックボールの上下動を「右矢印」と「左矢印」に変換 */
+            /* 【最重要】トラックボールのスクロール信号（上下動）を「右矢印」「左矢印」に完全翻訳 */
             sensor-bindings = <&inc_dec_kp RIGHT LEFT>;
         };
 
