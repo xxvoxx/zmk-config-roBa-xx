@@ -16,6 +16,7 @@
 &sl { release-after-ms = <180>; };
 
 &left_encoder { steps = <80>; };
+
 &right_encoder { steps = <80>; };
 
 / {
@@ -141,17 +142,19 @@
         };
 
         // キーを押した瞬間に「Altを押しつつ、Tabを1回叩く」マクロ
+
         alt_tab_press: alt_tab_press {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>;
+            bindings = <&macro_press>, <&kp LALT>, <&macro_tap>, <&kp TAB>;
         };
 
         // キーを離した瞬間に「Altを離す」マクロ
+
         alt_tab_release: alt_tab_release {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_release &kp LALT>;
+            bindings = <&macro_release>, <&kp LALT>;
         };
     };
 
@@ -212,7 +215,7 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                          &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp TAB LS(TAB)>;
+            sensor-bindings = <&inc_dec_kp LS(TAB) TAB>;
         };
 
         FUNCTION {
@@ -223,7 +226,7 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                            &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp LC(PAGE_UP) LC(PAGE_DOWN)>;
+            sensor-bindings = <&inc_dec_kp (LC(PAGE_DOWN)) LC(PAGE_UP)>;
         };
 
         MOUSE {
