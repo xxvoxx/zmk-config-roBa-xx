@@ -145,7 +145,7 @@
         alt_tab_start: alt_tab_start {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_to_layer 1>; // ★1は「alt_tab_layer」のレイヤー番号
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_to_layer 7>; // ★1は「alt_tab_layer」のレイヤー番号
         };
 
         // キーを離した時：Altを離し、通常レイヤー(0番)へ戻る
@@ -193,7 +193,7 @@
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1         &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
 
-            sensor-bindings = <&inc_dec_kp (LC(PAGE_DOWN)) LC(PG_UP)>;
+            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PG_UP)>;
         };
 
         SYM {
@@ -213,7 +213,7 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                          &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp (LC(PAGE_DOWN)) LC(PG_UP)>;
+            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PG_UP)>;
         };
 
         FUNCTION {
@@ -260,7 +260,6 @@
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans　&trans  &trans　 &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans   &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                           &trans
-            >;
             >;
             // ★重要：このレイヤーにいる間のエンコーダーの動きを定義
             sensor-bindings = <&inc_dec_kp TAB LS(TAB)>;
