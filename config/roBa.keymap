@@ -141,18 +141,11 @@
             label = "MACRO_LEFT_CLICK";
         };
 
-        // キーを押した時：Altを押し、Tabを1回叩き、専用レイヤー(1番)へ移動
-        alt_tab_start: alt_tab_start {
+        // 押した瞬間にAltホールド＋Tabを1回だけ入力するマクロ
+        alt_tab_press: alt_tab_press {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>, <&macro_to_layer 7>; // ★1は「alt_tab_layer」のレイヤー番号
-        };
-
-        // キーを離した時：Altを離し、通常レイヤー(0番)へ戻る
-        alt_tab_stop: alt_tab_stop {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&macro_release &kp LALT>, <&macro_to_layer 0>; // ★0は通常レイヤーの番号
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>;
         };
     };
 
@@ -173,12 +166,13 @@
             toggle-mode = "off";
         };
 
+        // 押したら上記マクロを発動、離したらAltを解放するホールドタップ
         alttab_hold: alttab_hold {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "hold-preferred";
             tapping-term-ms = <0>;
-            bindings = <&alt_tab_start>, <&alt_tab_stop>; // 修正したマクロを指定
+            bindings = <&alt_tab_press>, <&kp LALT>;
         };
     };
 
@@ -213,7 +207,8 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                          &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PG_UP)>;
+            // ★重要：このレイヤー（2番）にいる間のつまみの動きを Alt+Tab 用（TAB と LS(TAB)）に固定します
+            sensor-bindings = <&inc_dec_kp TAB LS(TAB)>;
         };
 
         FUNCTION {
@@ -224,7 +219,7 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                            &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp (LC(PAGE_DOWN)) LC(PAGE_UP)>;
+            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PAGE_UP)>;
         };
 
         MOUSE {
@@ -252,17 +247,6 @@
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans             &trans  &trans    &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                       &trans
             >;
-        };
-        // 1番：Alt+Tab専用のレイヤー（追加）
-        alt_tab_layer {
-            bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans   &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans　&trans  &trans　 &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans   &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                           &trans
-            >;
-            // ★重要：このレイヤーにいる間のエンコーダーの動きを定義
-            sensor-bindings = <&inc_dec_kp TAB LS(TAB)>;
         };
     };
 };
