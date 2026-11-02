@@ -69,7 +69,7 @@
         };
     };
 
-    macros {
+        macros {
         to_layer_0: to_layer_0 {
             compatible = "zmk,behavior-macro-one-param";
             #binding-cells = <1>;
@@ -141,10 +141,18 @@
             label = "MACRO_LEFT_CLICK";
         };
 
+        // 押した時：Altホールド＋Tabを1回叩くマクロ
         alt_tab_press: alt_tab_press {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>;
+        };
+
+        // 離した時：Altを確実にリリースするマクロ（新設）
+        alt_tab_release: alt_tab_release {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_release &kp LALT>;
         };
     };
 
@@ -165,12 +173,13 @@
             toggle-mode = "off";
         };
 
+        // 構文エラーを回避するためにマクロ同士の組み合わせに変更し、一つの山カッコの中に記述
         alttab_hold: alttab_hold {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "hold-preferred";
             tapping-term-ms = <0>;
-            bindings = <&alt_tab_press>, <&kp LALT>;
+            bindings = <&alt_tab_press &alt_tab_release>; // ★カンマを無くし、マクロ2つを直列で指定
         };
     };
 
