@@ -141,7 +141,6 @@
             label = "MACRO_LEFT_CLICK";
         };
 
-        // 押した瞬間にAltホールド＋Tabを1回だけ入力するマクロ
         alt_tab_press: alt_tab_press {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -166,7 +165,6 @@
             toggle-mode = "off";
         };
 
-        // 押したら上記マクロを発動、離したらAltを解放するホールドタップ
         alttab_hold: alttab_hold {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -207,7 +205,6 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                          &trans
             >;
 
-            // ★重要：このレイヤー（2番）にいる間のつまみの動きを Alt+Tab 用（TAB と LS(TAB)）に固定します
             sensor-bindings = <&inc_dec_kp TAB LS(TAB)>;
         };
 
