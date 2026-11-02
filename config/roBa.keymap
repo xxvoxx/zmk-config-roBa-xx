@@ -15,6 +15,9 @@
 
 &sl { release-after-ms = <180>; };
 
+&left_encoder { steps = <96>; };
+&right_encoder { steps = <96>; };
+
 / {
     combos {
         compatible = "zmk,combos";
@@ -155,6 +158,8 @@
             toggle-mode = "off";
         };
     };
+
+
 
     keymap {
         compatible = "zmk,keymap";
