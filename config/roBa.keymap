@@ -15,8 +15,8 @@
 
 &sl { release-after-ms = <180>; };
 
-&left_encoder { steps = <96>; };
-&right_encoder { steps = <96>; };
+&left_encoder { steps = <80>; };
+&right_encoder { steps = <80>; };
 
 / {
     combos {
@@ -139,6 +139,20 @@
 
             label = "MACRO_LEFT_CLICK";
         };
+
+        // キーを押した瞬間に「Altを押しつつ、Tabを1回叩く」マクロ
+        alt_tab_press: alt_tab_press {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_press &kp LALT>, <&macro_tap &kp TAB>;
+        };
+
+        // キーを離した瞬間に「Altを離す」マクロ
+        alt_tab_release: alt_tab_release {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_release &kp LALT>;
+        };
     };
 
     behaviors {
@@ -157,9 +171,15 @@
             display-name = "Toggle Layer Off";
             toggle-mode = "off";
         };
+
+        alttab_hold: alttab_hold {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <0>; // 即座にホールド（押した時のマクロ）を発動させる
+            bindings = <&alt_tab_press>, <&alt_tab_release>;
+        };
     };
-
-
 
     keymap {
         compatible = "zmk,keymap";
@@ -188,11 +208,11 @@
             bindings = <
 &trans  &kp KP_NUMBER_7  &kp KP_NUMBER_8  &kp KP_NUMBER_9  &kp KP_EQUAL                               &kp HOME       &kp END   &trans    &kp PAGE_UP  &kp PAGE_DOWN
 &trans  &kp KP_NUMBER_4  &kp KP_NUMBER_5  &kp KP_NUMBER_6  &kp KP_MULTIPLY  &kp KP_PLUS       &trans  &kp PAGE_UP    &mkp MB1  &kp UP    &mkp MB2     &trans
-&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &trans  &kp PAGE_DOWN  &kp LEFT  &kp DOWN  &kp RIGHT    &trans
+&trans  &kp KP_NUMBER_1  &kp KP_NUMBER_2  &kp KP_NUMBER_3  &kp KP_SLASH     &kp KP_MINUS      &trans  &kp PAGE_DOWN  &kp LEFT  &kp DOWN  &kp RIGHT    &alttab_hold 0 0
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                          &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp (LA(TAB)) LA(LS(TAB))>;
+            sensor-bindings = <&inc_dec_kp TAB LS(TAB)>;
         };
 
         FUNCTION {
