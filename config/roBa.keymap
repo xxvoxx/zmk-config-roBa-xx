@@ -16,9 +16,8 @@
 &sl { release-after-ms = <180>; };
 
 &left_encoder {
-    steps = <80>;
+    steps = <40>;
 };
-
 / {
     keymap-sensors {
         compatible = "zmk,keymap-sensors";
