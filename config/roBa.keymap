@@ -171,7 +171,7 @@
 &kp LEFT_CONTROL  &kp LWIN  &kp LEFT_ALT  &lt 3 LANGUAGE_2  &kp SPACE  &lt 1 LANG1         &kp BACKSPACE  &lt 2 ENTER                                &kp ESC
             >;
 
-            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PG_UP)>;
+            sensor-bindings = <&inc_dec_kp (LC(PG_UP)) LC(PG_DN)>;
         };
 
         SYM {
@@ -191,7 +191,7 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                                          &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PG_UP)>;
+            sensor-bindings = <&inc_dec_kp RIGHT LEFT>;
         };
 
         FUNCTION {
@@ -202,7 +202,7 @@
 &trans  &kp KP_NUMBER_0  &kp KP_DOT       &trans           &trans           &trans            &trans  &trans                            &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp LC(PAGE_DOWN) LC(PAGE_UP)>;
+            sensor-bindings = <&inc_dec_kp (LC(PG_UP)) LC(PG_DN)>;
         };
 
         MOUSE {
