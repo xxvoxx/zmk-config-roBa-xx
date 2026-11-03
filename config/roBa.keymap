@@ -15,9 +15,17 @@
 
 &sl { release-after-ms = <180>; };
 
-&left_encoder { steps = <80>; };
+&left_encoder {
+    steps = <80>;
+};
 
-&right_encoder { steps = <80>; };
+/ {
+    keymap-sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors = <&left_encoder>;
+        triggers-per-rotation = <20>;
+    };
+};
 
 / {
     combos {
